@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 
+
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -8,12 +9,12 @@ const userSchema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
-    unique: true, // Ensure email is unique
+    unique: true,
   },
   username: {
     type: String,
     required: true,
-    unique: true, // Ensure username is unique
+    unique: true,
   },
   password: {
     type: String,
@@ -21,7 +22,8 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['rider','customer']
+    enum: ['rider', 'customer'],
+    required: true, 
   },
   bio: {
     type: String,
@@ -33,9 +35,10 @@ const userSchema = new mongoose.Schema({
   },
   isEmailVerified: {
     type: Boolean,
-    default: false, // Default to false until the user verifies their email
+    default: false, 
   },
 }, { timestamps: true });
+
 
 const User = mongoose.model('User', userSchema);
 
