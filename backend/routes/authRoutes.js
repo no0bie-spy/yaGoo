@@ -8,24 +8,21 @@ const authRouter = Router();
 // Route for user registration
 authRouter.post(
   "/register",
-  validate(userValidation.register), // Validates registration inputs using Joi schema
-  (req, res, next) => {
-    next(); // Proceed to the register controller
-  },
+  validate({ body: userValidation.register }), // Pass the schema with the 'body' key
   authController.register // Registration controller logic
 );
 
 // Route for user login
 authRouter.post(
   "/login",
-  validate(userValidation.login), // Validates login inputs using Joi schema
+  validate({ body: userValidation.login }), // Pass the schema with the 'body' key
   authController.login // Login controller logic
 );
 
 // Route for email verification (updated to handle OTP-based flow)
 authRouter.post(
   "/verify-email",
-  validate(userValidation.verifyEmail), // Validates email and OTP inputs
+  validate({ body: userValidation.verifyEmail }), // Pass the schema with the 'body' key
   authController.verifyEmail // Email verification logic
 );
 

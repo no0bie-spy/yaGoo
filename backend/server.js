@@ -4,6 +4,8 @@ import connectToDB from './connect.js';
 import routes from './routes/index.js';
 import getUserFromAuthToken from './middlewares/getUserFromAuthToken.js';
 import path from 'path'; // Import path module to resolve the directory
+import { config } from "dotenv";
+config();
 
 let app;
 
