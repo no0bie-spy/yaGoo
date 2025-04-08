@@ -24,7 +24,7 @@ export const sendEmailWithOTP = async (email, otp) => {
     subject: "Your OTP for Email Verification", // Subject line
     html: `
       <p>Dear User,</p>
-      <p>Thank you for registering on Bookly. Please use the following OTP to verify your email address:</p>
+      <p>Thank you for registering on yaGOo. Please use the following OTP to verify your email address:</p>
       <h2 style="color: #2c3e50;">${otp}</h2>
       <p>Note: This OTP is valid for the next 10 minutes.</p>
       <p>Do not share this OTP with anyone.</p>
