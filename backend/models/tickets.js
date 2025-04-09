@@ -12,6 +12,8 @@ const ticketSchema = new Schema({
   },
   acceptedBy: { type: Schema.Types.ObjectId, ref: 'User' },
   createdAt: { type: Date, default: Date.now },
-});
+  cancellationReason: { type: String },
+  completedAt: { type: Date },
+}, { timestamps: true });
 
 export default model('Ticket', ticketSchema);
