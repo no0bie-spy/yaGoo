@@ -2,7 +2,15 @@ import mongoose from 'mongoose';
 
 
 const userSchema = new mongoose.Schema({
-  name: {
+  firstName: {
+    type: String,
+    required: true,
+  },
+  middleName: {
+    type: String,
+    required: true,
+  },
+  lastName: {
     type: String,
     required: true,
   },
@@ -11,6 +19,11 @@ const userSchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
+  googleId: {
+    type: String,
+    default: null,
+  },
+  
   username: {
     type: String,
     required: true,
@@ -19,6 +32,11 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
+  },
+  phone: {
+    type: String,
+    required: true,
+    unique: true,
   },
   role: {
     type: String,
@@ -36,10 +54,19 @@ const userSchema = new mongoose.Schema({
   isEmailVerified: {
     type: Boolean,
     default: false, 
+    
   },
-}, { timestamps: true });
-
-
-const User = mongoose.model('User', userSchema);
+  isActive: {
+    type: Boolean,
+    default: true,
+  },
+  isDeleted: {
+    type: Boolean,
+    default: false,
+    },
+  }, { timestamps: true });
+  
+  
+  const User = mongoose.model('User', userSchema);
 
 export default User;
