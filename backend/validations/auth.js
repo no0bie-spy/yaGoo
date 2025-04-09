@@ -3,12 +3,28 @@ import Joi from 'joi';
 const userValidation = {
   // Validation for user registration
   register: Joi.object({
-    name: Joi.string()
+    firstName: Joi.string()
       .min(3)
       .max(50)
       .required()
       .messages({
-        'string.empty': 'Name is required',
+        'string.empty': 'First Name is required',
+        'string.min': 'Name must be at least 3 characters',
+        'string.max': 'Name must not exceed 50 characters',
+      }),
+    middleName: Joi.string()
+      .min(3)
+      .max(50)
+      .messages({
+        'string.min': 'Name must be at least 3 characters',
+        'string.max': 'Name must not exceed 50 characters',
+      }),
+    lastName: Joi.string()
+      .min(3)
+      .max(50)
+      .required()
+      .messages({
+        'string.empty': 'Last name is required',
         'string.min': 'Name must be at least 3 characters',
         'string.max': 'Name must not exceed 50 characters',
       }),
@@ -40,7 +56,7 @@ const userValidation = {
       }),
 
     role: Joi.string()
-      .valid('rider', 'customer')  // Role can be either 'rider' or 'customer'
+      .valid('rider', 'customer') 
       .required()
       .messages({
         'any.only': 'Role must be either rider or customer',
@@ -99,11 +115,60 @@ const userValidation = {
       }),
 
     otp: Joi.string()
-      .length(6) // Assuming OTP is 6 digits long
+      .length(6)
       .required()
       .messages({
         'string.empty': 'OTP is required',
         'string.length': 'OTP should be 6 digits long',
+      }),
+  }),
+
+  // 🚗 Rider-specific registration (after email verification)
+  riderRegistration: Joi.object({
+    userId: Joi.string().required().messages({
+      'string.empty': 'User ID is required',
+    }),
+
+    vehicleType: Joi.string()
+      .valid('bike', 'car', 'scooter', 'van', 'other')
+      .required()
+      .messages({
+        'any.only': 'Invalid vehicle type',
+        'string.empty': 'Vehicle type is required',
+      }),
+
+    vehicleNumber: Joi.string()
+      .pattern(/^[A-Z0-9\-]{5,15}$/i)
+      .required()
+      .messages({
+        'string.empty': 'Vehicle number is required',
+        'string.pattern.base': 'Invalid vehicle number format',
+      }),
+
+    licenseNumber: Joi.string()
+      .alphanum()
+      .min(6)
+      .max(20)
+      .required()
+      .messages({
+        'string.empty': 'License number is required',
+        'string.alphanum': 'License number must be alphanumeric',
+      }),
+
+    licenseDocumentUrl: Joi.string()
+      .uri()
+      .required()
+      .messages({
+        'string.uri': 'License document must be a valid URL',
+        'string.empty': 'License document is required',
+      }),
+
+    vehicleRegistrationDocumentUrl: Joi.string()
+      .uri()
+      .required()
+      .messages({
+        'string.uri': 'Vehicle registration document must be a valid URL',
+        'string.empty': 'Vehicle registration document is required',
       }),
   }),
 };
