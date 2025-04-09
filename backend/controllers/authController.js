@@ -3,6 +3,8 @@ import bcrypt from "bcryptjs";  // For hashing passwords
 import jwt from "jsonwebtoken";  // For generating JWT tokens
 import { catchAsync } from "../helper/catchAsync.js";  // Async error handler
 import { sendEmailWithOTP, generateOTP } from "../mailer/email.js";  // Using OTP and email helper
+import { config } from 'dotenv';
+config(); 
 
 // Controller for user registration
 const register = catchAsync(async (req, res) => {
@@ -39,7 +41,7 @@ const register = catchAsync(async (req, res) => {
   await sendEmailWithOTP(email, otp);
 
   // Generate a JWT token
-  const token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET, { expiresIn: "1d" });
+  const token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET_KEY, { expiresIn: "1d" });
 
   return res.status(201).json({
     message: "User registered successfully. Please verify your email.",
@@ -65,7 +67,7 @@ const login = catchAsync(async (req, res) => {
   }
 
   // Generate a JWT token
-  const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "1d" });
+  const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET_KEY, { expiresIn: "1d" });
 
   return res.status(200).json({
     message: "Login successful.",
