@@ -1,37 +1,36 @@
-import { config } from "dotenv";
+// forgot-pw.js
 import nodemailer from "nodemailer";
+import { config } from "dotenv";
 
 config();
 
+// SMTP transport setup
 const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: process.env.SMTP_PORT,
-  secure: true, // true for port 465, false for other ports
-  auth: {
-    user: process.env.SMTP_USERNAME,
-    pass: process.env.SMTP_PASSWORD,
-  },
+    host: process.env.SMTP_HOST,
+    port: process.env.SMTP_PORT,
+    secure: true, // true for port 465, false for other ports
+    auth: {
+        user: process.env.SMTP_USERNAME,
+        pass: process.env.SMTP_PASSWORD,
+    },
 });
 
-export const generateOTP = () => {
-  return Math.floor(100000 + Math.random() * 900000).toString();
-};
+// Function to send the recovery email
+export async function sendRecoveryEmail(userEmail) {
+    const token = (100000 + parseInt(Math.random() * 1000000)).toString();
 
-export const sendEmailWithOTP = async (email, otp) => {
-  const mailOptions = {
-    from: '"Bishal" <node-class@padxu.com>', 
-    to: email, // Receiver's email
-    subject: "Your OTP for Email Verification", // Subject line
-    html: `
-      <p>Dear User,</p>
-      <p>Thank you for registering on yaGOo. Please use the following OTP to verify your email address:</p>
-      <h2 style="color: #2c3e50;">${otp}</h2>
-      <p>Note: This OTP is valid for the next 10 minutes.</p>
-      <p>Do not share this OTP with anyone.</p>
-    `,
-  };
+    // Send mail with the defined transport object
+    const info = await transporter.sendMail({
+        from: '"Test User" <node-class@padxu.com>',
+        to: userEmail, // Send to the user's email
+        subject: "Password Recovery - Verify Your Email",
+        text: "Hello, use the token to verify your email.",
+        html: `<p>Dear User, <br /> Use this token to verify your email: 
+        <b style='font-size: 20px;'>${token}</b>
+        <br />
+        Do not share this email with anyone.</p>`,
+    });
 
-  const info = await transporter.sendMail(mailOptions);
-  console.log("OTP sent: %s", info.messageId);
-  return info.messageId;
-};
+    console.log("Message sent: %s", info.messageId);
+    return{token, info};
+}

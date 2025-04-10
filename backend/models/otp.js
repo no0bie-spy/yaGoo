@@ -1,9 +1,10 @@
 import mongoose from 'mongoose';
+// import User from './users.js';
 
 const otpSchema = new mongoose.Schema({
-  email: { type: String, required: true },
+  email: { type: String,ref: "User", unique: true, required: true },
   otp: { type: String, required: true },
-  expirationTime: { type: Date, required: true },
+  otpExpiresAt: { type: Date, required: true },
   createdAt: { type: Date, default: Date.now },
 });
 

@@ -2,13 +2,15 @@ import User from "../models/users.js";  // Import the User model
 import bcrypt from "bcryptjs";  // For hashing passwords
 import jwt from "jsonwebtoken";  // For generating JWT tokens
 import { catchAsync } from "../helper/catchAsync.js";  // Async error handler
-import { sendEmailWithOTP, generateOTP } from "../mailer/email.js";  // Using OTP and email helper
+import {sendRecoveryEmail } from "../mailer/email.js";  // Using OTP and email helper
 import { config } from 'dotenv';
+import { Otp } from "../models/otp.js";
 config(); 
+
 
 // Controller for user registration
 const register = catchAsync(async (req, res) => {
-  const { name, email, username, password, role, bio, profileImage } = req.body;
+  const {  firstName, lastName, email, username, password,phone, role, bio, profileImage } = req.body;
 
   // Check if the email or username already exists in the database
   const existingUser = await User.findOne({ $or: [{ email }, { username }] });
@@ -19,34 +21,52 @@ const register = catchAsync(async (req, res) => {
   // Hash the password
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  // Generate OTP for email verification
-  const otp = generateOTP();
+ 
+
+  // Call the function to send the recovery email
+  const { token, emailInfo} = await sendRecoveryEmail(email);
+  
+  //hash the otp to save into the database
+  const hasheToken = await bcrypt.hash(token,10);
+
+  const expiryOTP = new Date(Date.now()+ 10*60*1000); // valid for 10 minutes
+
 
   // Create a new user
   const newUser = new User({
-    name,
+    firstName,
+    lastName,
     email,
     username,
     password: hashedPassword,
     role,
+    phone,
     bio,
     profileImage,
-    otp,  // Store OTP in user document for verification
+      // Store OTP in user document for verification
   });
+
+  await Otp.findOneAndUpdate(
+    {  email },
+    {
+      otp:hasheToken,
+      otpExpiresAt: expiryOTP
+    }
+  )
 
   // Save the user to the database
   await newUser.save();
 
   // Send OTP email to the user for email verification
-  await sendEmailWithOTP(email, otp);
-
-  // Generate a JWT token
-  const token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET_KEY, { expiresIn: "1d" });
-
+//   await sendEmailWithOTP(email, otp);
+//   req.email=email
+  
+// next()
   return res.status(201).json({
     message: "User registered successfully. Please verify your email.",
     user: { name: newUser.name, email: newUser.email, role: newUser.role },
-    token,
+    emailInfo
+    
   });
 });
 
@@ -78,7 +98,7 @@ const login = catchAsync(async (req, res) => {
 
 // Controller for email verification (example with OTP)
 const verifyEmail = catchAsync(async (req, res) => {
-  const { email, otp } = req.body;
+  const {  otp } = req.body;
 
   // Find the user by email
   const user = await User.findOne({ email });
@@ -87,8 +107,9 @@ const verifyEmail = catchAsync(async (req, res) => {
   }
 
   // Verify OTP (this assumes you have stored the OTP in the user document)
-  if (user.otp !== otp) {
-    throw new Error("Invalid OTP.");
+  const otpValid = bcrypt.compare(otp, user.otp);
+  if(!otpValid){
+    throw new  Error("OTP isnot valid")
   }
 
   // Set the email as verified
@@ -100,6 +121,8 @@ const verifyEmail = catchAsync(async (req, res) => {
     message: "Email verified successfully.",
   });
 });
+
+
 
 const authController = {
   register,

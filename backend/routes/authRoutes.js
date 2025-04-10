@@ -8,7 +8,7 @@ const authRouter = Router();
 // Route for user registration
 authRouter.post(
   "/register",
-  validate({ body: userValidation.register }), // Pass the schema with the 'body' key
+  validate( userValidation.register ), // Pass the schema with the 'body' key
   authController.register // Registration controller logic
 );
 

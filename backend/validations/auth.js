@@ -15,6 +15,7 @@ const userValidation = {
     middleName: Joi.string()
       .min(3)
       .max(50)
+
       .messages({
         'string.min': 'Name must be at least 3 characters',
         'string.max': 'Name must not exceed 50 characters',
@@ -68,6 +69,13 @@ const userValidation = {
       .optional()
       .messages({
         'string.max': 'Bio must not exceed 500 characters',
+      }),
+
+      phone: Joi.string()
+      .min(10)
+      .required()
+      .messages({
+        'string.min': 'Number must be 10 words minimum',
       }),
 
     profileImage: Joi.string()
