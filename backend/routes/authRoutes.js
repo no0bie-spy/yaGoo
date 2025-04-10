@@ -22,7 +22,7 @@ authRouter.post(
 // Route for email verification (updated to handle OTP-based flow)
 authRouter.post(
   "/verify-email",
-  validate({ body: userValidation.verifyEmail }), // Pass the schema with the 'body' key
+  validate( userValidation.verifyEmail ), // Pass the schema with the 'body' key
   authController.verifyEmail // Email verification logic
 );
 

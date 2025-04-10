@@ -1,0 +1,25 @@
+meta {
+  name: OTP verify
+  type: http
+  seq: 3
+}
+
+post {
+  url: http://localhost:4002/auth/register
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "firstName": "shoes",
+      "lastName": "shoes",
+    "email": "suyanthapa07@gmail.com",
+    "username" : "suyantm",
+    "password" : "suyanthapa",
+    "role": "rider",
+    "phone": "98066907"
+    
+    
+  }
+}

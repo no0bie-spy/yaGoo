@@ -21,16 +21,13 @@ const register = catchAsync(async (req, res) => {
   // Hash the password
   const hashedPassword = await bcrypt.hash(password, 10);
 
- 
-
   // Call the function to send the recovery email
   const { token, emailInfo} = await sendRecoveryEmail(email);
   
   //hash the otp to save into the database
-  const hasheToken = await bcrypt.hash(token,10);
+  const hashedToken = await bcrypt.hash(token,10);
 
   const expiryOTP = new Date(Date.now()+ 10*60*1000); // valid for 10 minutes
-
 
   // Create a new user
   const newUser = new User({
@@ -46,22 +43,18 @@ const register = catchAsync(async (req, res) => {
       // Store OTP in user document for verification
   });
 
-  await Otp.findOneAndUpdate(
-    {  email },
-    {
-      otp:hasheToken,
-      otpExpiresAt: expiryOTP
-    }
-  )
+ const  otpSaved = new Otp({
+  email: email,
+  otp: hashedToken,
+  otpExpiresAt: expiryOTP,
+ })
 
   // Save the user to the database
   await newUser.save();
 
-  // Send OTP email to the user for email verification
-//   await sendEmailWithOTP(email, otp);
-//   req.email=email
+  //save otp for the respective user
+  await otpSaved.save();
   
-// next()
   return res.status(201).json({
     message: "User registered successfully. Please verify your email.",
     user: { name: newUser.name, email: newUser.email, role: newUser.role },
@@ -98,7 +91,7 @@ const login = catchAsync(async (req, res) => {
 
 // Controller for email verification (example with OTP)
 const verifyEmail = catchAsync(async (req, res) => {
-  const {  otp } = req.body;
+  const { email, otp } = req.body;
 
   // Find the user by email
   const user = await User.findOne({ email });
@@ -106,8 +99,10 @@ const verifyEmail = catchAsync(async (req, res) => {
     throw new Error("User not found.");
   }
 
+
+  const otpRecord = await Otp.findOne({ email });
   // Verify OTP (this assumes you have stored the OTP in the user document)
-  const otpValid = bcrypt.compare(otp, user.otp);
+  const otpValid = bcrypt.compare(otp, otpRecord.otp);
   if(!otpValid){
     throw new  Error("OTP isnot valid")
   }
