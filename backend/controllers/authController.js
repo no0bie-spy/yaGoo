@@ -98,7 +98,11 @@ const verifyEmail = catchAsync(async (req, res) => {
   if (!user) {
     throw new Error("User not found.");
   }
-
+  if(user.isEmailVerified===true){
+    res.status(200).json({
+      message: "Email already verified"
+    })
+  }
 
   const otpRecord = await Otp.findOne({ email });
   // Verify OTP (this assumes you have stored the OTP in the user document)
@@ -109,7 +113,10 @@ const verifyEmail = catchAsync(async (req, res) => {
 
   // Set the email as verified
   user.isEmailVerified = true;
-  user.otp = null;  // Clear the OTP after successful verification
+  
+  await Otp.deleteOne({ email });
+
+
   await user.save();
 
   return res.status(200).json({

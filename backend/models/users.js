@@ -19,10 +19,7 @@ const userSchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
-  googleId: {
-    type: String,
-    default: null,
-  },
+ 
   
   username: {
     type: String,
