@@ -106,16 +106,16 @@ const verifyEmail = catchAsync(async (req, res) => {
 
   const otpRecord = await Otp.findOne({ email });
   // Verify OTP (this assumes you have stored the OTP in the user document)
-  const otpValid = bcrypt.compare(otp, otpRecord.otp);
+  const otpValid = await bcrypt.compare(otp, otpRecord.otp);
   if(!otpValid){
     throw new  Error("OTP isnot valid")
   }
 
+   
   // Set the email as verified
   user.isEmailVerified = true;
   
   await Otp.deleteOne({ email });
-
 
   await user.save();
 
