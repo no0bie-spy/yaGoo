@@ -5,7 +5,10 @@ import * as WebBrowser from 'expo-web-browser';
 import * as Google from 'expo-auth-session/providers/google';
 import { useAuthStore } from './stores/auth';
 
+import {googleClientConfig} from '../keys/app'; 
+
 WebBrowser.maybeCompleteAuthSession();
+
 
 export default function Auth() {
   const router = useRouter();
@@ -13,9 +16,9 @@ export default function Auth() {
   const [isLoading, setIsLoading] = useState(false);
 
   const [, response, promptAsync] = Google.useAuthRequest({
-    androidClientId: '784356669612-cq5sq9r0kuv1i7duebgh2ls82rodreph.apps.googleusercontent.com',
-    iosClientId: 'YOUR_IOS_CLIENT_ID',
-    webClientId: '784356669612-na4g9tfkj92n782i1c306mni0v88b5on.apps.googleusercontent.com',
+    androidClientId: googleClientConfig.ANDROID_CLIENT_ID,
+    iosClientId: googleClientConfig.IOS_CLIENT_ID,
+    webClientId: googleClientConfig.WEB_CLIENT_ID,
   });
 
   useEffect(() => {
