@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
 import * as Google from 'expo-auth-session/providers/google';
-import { useAuthStore } from './stores/auth';
+import { useAuthStore } from '../app/stores/auth';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -34,7 +34,7 @@ export default function Auth() {
             email: data.email,
             picture: data.picture,
           });
-          router.replace('/(tabs)');
+          router.replace('../(tabs)');
         })
         .catch(console.error)
         .finally(() => setIsLoading(false));
