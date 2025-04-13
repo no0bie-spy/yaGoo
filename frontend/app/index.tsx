@@ -3,6 +3,12 @@ import { StyleSheet, Text, View, Button, ActivityIndicator } from "react-native"
 import * as WebBrowser from "expo-web-browser";
 import * as Google from "expo-auth-session/providers/google";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {googleClientConfig} from '../keys/app';
+import {
+  GoogleSignin,
+  GoogleSigninButton,
+  statusCodes,
+} from '@react-native-google-signin/google-signin';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -10,10 +16,9 @@ const App = () => {
   const [userInfo, setUserInfo] = React.useState<{ name: string; email: string } | null>(null);
   const [loading, setLoading] = React.useState(true); // Track loading state
   const [request, response, promptAsync] = Google.useAuthRequest({
-    iosClientId: "784356669612-0ojlao97m8vemia8n683na677812t218.apps.googleusercontent.com",
-    webClientId: "784356669612-na4g9tfkj92n782i1c306mni0v88b5on.apps.googleusercontent.com",
-    androidClientId: "784356669612-d8adc8taclaekioueleb7pjoqqos3lda.apps.googleusercontent.com",
-  });
+    iosClientId:googleClientConfig.IOS_CLIENT_ID,
+    webClientId: googleClientConfig.WEB_CLIENT_ID,
+    androidClientId:googleClientConfig.ANDROID_CLIENT_ID  });
 
   // Check AsyncStorage for saved user info
   React.useEffect(() => {
